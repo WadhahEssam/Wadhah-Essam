@@ -137,6 +137,20 @@ public class LinkedList<T> implements List<T> {
 		}
 		
 	}
+	
+	//recursive search
+	public boolean search ( T e ) {
+		return searchH( head , e ) ;
+	}
+	
+	private boolean searchH ( Node<T> c , T e ) {
+		if ( c == null ) 
+			return false ; 
+		else if ( c.data.equals(e) ) 
+			return true ;  
+		else 
+			return searchH(c.next,e) ; 
+	}
 
 }
 
