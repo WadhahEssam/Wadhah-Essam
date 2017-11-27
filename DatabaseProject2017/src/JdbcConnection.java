@@ -166,11 +166,11 @@ public class JdbcConnection {
 	            String sqlUpdate = "" ;
 	            
 	            if ( nbrAttr == 4 ) {
-	            	System.out.println("Input the new Award-Date of the research award obtained by " + firstName + " (MM/DD/YYYY) :)");
+	            	System.out.println("Input the new Award-Date of the research award obtained by " + firstName + " (MM-DD-YYYY) :)");
 	            	input.nextLine();
 	            	awardDate = input.nextLine() ; 
 	            	sqlUpdate = "update RESEARCHAWARD "  
-		            		+ "set AWARD_DATE = '"+awardDate+"' where FIRST_NAME = '" + firstName + "' and MIDDLE_NAME = '" + middleName + "' and FAMILLY_NAME = '" + familyName + "' "  ; 
+		            		+ "set AWARD_DATE = TO_DATE('" + awardDate + "', 'DD-MM-YYYY') where FIRST_NAME = '" + firstName + "' and MIDDLE_NAME = '" + middleName + "' and FAMILLY_NAME = '" + familyName + "' "  ; 
 	            } else if ( nbrAttr == 5 ) {
 	            	System.out.println("Input the new Award-Amount of the research award obtained by " + firstName + " :)");
 	            	input.nextLine();
@@ -190,13 +190,16 @@ public class JdbcConnection {
 		            countUpdated = stmt.executeUpdate(sqlUpdate);
 	            }
 	            
-	            if ( countUpdated == 1 ) {
-	            	System.out.println("You have Updated One Element ");
+	            if ( countUpdated >= 1 ) {
+	            	System.out.println("You have Updated "+countUpdated+" Element/s ");
 	            } 
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	System.out.println();
+                System.out.println("SQL State: " + e.getSQLState() );
+                System.out.println("Error Code: " + e.getErrorCode() );
+                System.out.println("Message: " + e.getMessage() );
 	        } finally {
 	            try {
 	                stmt.close();
@@ -254,13 +257,19 @@ public class JdbcConnection {
 	            		+ "where FIRST_NAME = '" + firstName + "' and MIDDLE_NAME = '" + middleName + "' and FAMILLY_NAME = '" + familyName + "' "  ; 
 	            int countDeleted = stmt.executeUpdate(sqlDelete);
 	            
-	            if ( countDeleted == 1 ) {
-	            	System.out.println("You have Deleted One Element ");
-	            } 
+	            if ( countDeleted > 0 ) {
+	            	System.out.println("You have Deleted "+ countDeleted +" Element/s ");
+	            } else {
+	            	System.out.println("There is no such element in the research award table ( No element has been deleted ) ");
+	            }
+	            
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	System.out.println();
+                System.out.println("SQL State: " + e.getSQLState() );
+                System.out.println("Error Code: " + e.getErrorCode() );
+                System.out.println("Message: " + e.getMessage() );
 	        } finally {
 	            try {
 	                stmt.close();
@@ -309,7 +318,7 @@ public class JdbcConnection {
 			System.out.println("Input Family-Name :)");
 			familyName = input.nextLine() ; 
 			
-			System.out.println("Input Award-Date (MM/DD/YYYY) :)"); 
+			System.out.println("Input Award-Date (DD-MM-YYYY) :)"); 
 			awardDate = input.nextLine() ; 
 			
 			System.out.println("Input Award-Amount :)");
@@ -327,24 +336,20 @@ public class JdbcConnection {
 	            stmt = con.createStatement();
 	
 	            String sqlInsert = "insert into  RESEARCHAWARD " 
-	            		+ "values ( '" + firstName + "' , '" + middleName + "' , '" + familyName + "' , TO_DATE('" + awardDate + "', 'MM/DD/YYYY') , '" + awardAmount + "' , '" + awardTitle + "'  )";
+	            		+ "values ( '" + firstName + "' , '" + middleName + "' , '" + familyName + "' , TO_DATE('" + awardDate + "', 'DD-MM-YYYY') , '" + awardAmount + "' , '" + awardTitle + "'  )";
 	            int countInserted = stmt.executeUpdate(sqlInsert);
 	            
-	            if ( countInserted == 1 ) {
-	            	System.out.println("You have Inserted One Element ");
+	            
+	            if ( countInserted > 0 ) {
+	            	System.out.println("You have Inserted "+ countInserted +" Element/s ");
 	            }
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (SQLException e) {
-                System.out.println(e.getErrorCode() );
-                System.out.print("There is an error : ");
-                if ( e.getErrorCode() == 12899 ) System.out.print("value is too big");
-                else if ( e.getErrorCode() == 1 ) System.out.print("primary key can't be duplicated");
-                else if ( e.getErrorCode() == 1400 ) System.out.print("null value is not allowed");
-                else if ( e.getErrorCode() == 1843 ) System.out.print("the value doesn't match the datatype ( not month ) ");
-                else if ( e.getErrorCode() == 1722 ) System.out.print("the value doesn't match the datatype ( not number ) ");
-                else if ( e.getErrorCode() == 2291 ) System.out.print("there is no primary key in table researcher with this values ");                
-                System.out.println( " << Details >> " + e.getMessage()  );   
+	        	System.out.println();
+                System.out.println("SQL State: " + e.getSQLState() );
+                System.out.println("Error Code: " + e.getErrorCode() );
+                System.out.println("Message: " + e.getMessage() );
 	        } finally {
 	            try {
 	                stmt.close();
@@ -362,9 +367,7 @@ public class JdbcConnection {
 	        
 			System.out.println("");
 
-	        
 		}
-		
 		
 	}
 
@@ -427,13 +430,16 @@ public class JdbcConnection {
 		            countUpdated = stmt.executeUpdate(sqlUpdate);
 	            }
 	            
-	            if ( countUpdated == 1 ) {
-	            	System.out.println("You have Updated One Element ");
+	            if ( countUpdated > 0 ) {
+	            	System.out.println("You have Updated "+ countUpdated +" Element/s ");
 	            } 
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	System.out.println();
+                System.out.println("SQL State: " + e.getSQLState() );
+                System.out.println("Error Code: " + e.getErrorCode() );
+                System.out.println("Message: " + e.getMessage() );
 	        } finally {
 	            try {
 	                stmt.close();
@@ -492,13 +498,18 @@ public class JdbcConnection {
 	            		+ "where FIRST_NAME = '" + firstName + "' and MIDDLE_NAME = '" + middleName + "' and FAMILLY_NAME = '" + familyName + "' "  ; 
 	            int countDeleted = stmt.executeUpdate(sqlDelete);
 	            
-	            if ( countDeleted == 1 ) {
-	            	System.out.println("You have Deleted One Element ");
-	            } 
+	            if ( countDeleted > 0 ) {
+	            	System.out.println("You have Deleted "+ countDeleted +" Element/s ");
+	            } else {
+	            	System.out.println("There is no such element in the researcher table ( No element has been deleted ) ");
+	            }
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	        	System.out.println();
+                System.out.println("SQL State: " + e.getSQLState() );
+                System.out.println("Error Code: " + e.getErrorCode() );
+                System.out.println("Message: " + e.getMessage() );
 	        } finally {
 	            try {
 	                stmt.close();
@@ -565,18 +576,16 @@ public class JdbcConnection {
 	            		+ "values ( '" + firstName + "' , '" + middleName + "' , '" + familyName + "' , '" + mobile + "' , '" + email + "' )";
 	            int countInserted = stmt.executeUpdate(sqlInsert);
 	            
-	            if ( countInserted == 1 ) {
-	            	System.out.println("You have Inserted One Element ");
+	            if ( countInserted > 0 ) {
+	            	System.out.println("You have Inserted "+ countInserted +" Element/s ");
 	            }
 	        } catch (ClassNotFoundException e) {
 	            e.printStackTrace();
 	        } catch (SQLException e) {
-                System.out.println(e.getErrorCode() );
-                System.out.print("There is an error : ");
-                if ( e.getErrorCode() == 12899 ) System.out.print("value is too big");
-                else if ( e.getErrorCode() == 1 ) System.out.print("primary key can't be duplicated");
-                else if ( e.getErrorCode() == 1400 ) System.out.print("null value is not allowed");
-                System.out.println( " << Details >> " + e.getMessage()  );   
+	        	System.out.println();
+                System.out.println("SQL State: " + e.getSQLState() );
+                System.out.println("Error Code: " + e.getErrorCode() );
+                System.out.println("Message: " + e.getMessage() );
 	        } finally {
 	            try {
 	                stmt.close();
